@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gemini Doom - A retro 3D HTML5 Doom clone built with Three.js, featuring procedural 8-bit textures, collision physics, and mouse look controls.">
+    <title>Gemini Doom - Retro 3D Three.js Engine</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Main Retro Arcade Monitor Wrapper -->
+    <main class="game-container" id="game-container" aria-label="Gemini Doom Console">
+        
+        <!-- CRT Screen Bezel containing the 3D Canvas -->
+        <section class="screen" id="screen">
+            <canvas id="game-canvas"></canvas>
+            
+            <!-- CRT Shader-like overlays for retro atmosphere -->
+            <div class="crt-overlay" aria-hidden="true"></div>
+            
+            <!-- Centered crosshair for aiming -->
+            <div class="crosshair" aria-hidden="true">
+                <div class="crosshair-dot"></div>
+            </div>
+            
+            <!-- 2D Weapon Sprite Canvas Overlay -->
+            <canvas id="weapon-canvas" aria-hidden="true"></canvas>
+            
+            <!-- Target hit notifier text -->
+            <div id="hit-notification" aria-hidden="true">TARGET HIT!</div>
+            
+            <!-- Start/Pause Pointer Lock Screen Overlay -->
+            <div id="overlay" class="overlay-screen" role="dialog" aria-modal="true" aria-labelledby="title-text">
+                <h1 class="game-title" id="title-text">GEMINI DOOM</h1>
+                <button class="start-btn" id="start-btn">CLICK TO PLAY</button>
+                <div class="instructions">
+                    <p><strong>CONTROLS:</strong></p>
+                    <p>Move: <span>W, A, S, D</span> / <span>Arrow keys</span></p>
+                    <p>Look around: <span>Move Mouse</span> (Pointer Lock) or <span>Left/Right Arrow keys</span></p>
+                    <p>Press <span>ESC</span> to pause & release mouse</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Doom-style Interactive Status Bar (HUD) -->
+        <footer class="hud" role="contentinfo" aria-label="Player Status">
+            <!-- Health Panel -->
+            <div class="hud-panel" aria-live="polite">
+                <span class="hud-label">HEALTH</span>
+                <span class="hud-value" id="hud-health">100%</span>
+            </div>
+
+            <!-- Armor Panel -->
+            <div class="hud-panel" aria-live="polite">
+                <span class="hud-label">ARMOR</span>
+                <span class="hud-value green" id="hud-armor">100%</span>
+            </div>
+
+            <!-- Animated Face Panel -->
+            <div class="hud-face-panel" aria-label="Doomguy Face">
+                <span id="hud-face" aria-live="polite">🙂</span>
+            </div>
+
+            <!-- Ammo Panel -->
+            <div class="hud-panel" aria-live="polite">
+                <span class="hud-label">AMMO</span>
+                <span class="hud-value yellow" id="hud-ammo">50</span>
+            </div>
+
+            <!-- Weapon Panel -->
+            <div class="hud-panel" aria-live="polite">
+                <span class="hud-label">WEAPON</span>
+                <span class="hud-value" id="hud-weapon" style="color: #33aaff; text-shadow: 0 0 4px rgba(51, 170, 255, 0.6);">SHOTGUN</span>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Import Three.js via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Link Game Code -->
+    <script src="game.js"></script>
+</body>
+</html>

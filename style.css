@@ -1,0 +1,318 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+body {
+    background-color: #0d0d11;
+    background-image: radial-gradient(circle at center, #1b1b22 0%, #0d0d11 100%);
+    color: #f0f0f0;
+    font-family: 'Press Start 2P', monospace;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Retro Monitor Container */
+.game-container {
+    position: relative;
+    width: 90vw;
+    height: 85vh;
+    max-width: 1024px;
+    max-height: 768px;
+    background-color: #1a1a1f;
+    border: 12px solid #2e2e38;
+    border-radius: 16px;
+    box-shadow: 
+        0 20px 50px rgba(0, 0, 0, 0.8),
+        inset 0 0 10px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* CRT Screen Frame */
+.screen {
+    position: relative;
+    flex: 1;
+    background-color: #000;
+    overflow: hidden;
+}
+
+/* Three.js Canvas */
+#game-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    image-rendering: pixelated;
+}
+
+/* Retro CRT Overlay (Scanlines & Flicker) */
+.crt-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.04));
+    background-size: 100% 4px, 6px 100%;
+}
+
+.crt-overlay::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: radial-gradient(circle, transparent 60%, rgba(0, 0, 0, 0.6) 100%);
+    pointer-events: none;
+}
+
+/* Retro Crosshair */
+.crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.8;
+}
+
+.crosshair::before, .crosshair::after {
+    content: '';
+    position: absolute;
+    background-color: #ff3333;
+    box-shadow: 0 0 4px #ff3333;
+}
+
+/* Horizontal line */
+.crosshair::before {
+    top: 7px;
+    left: 0;
+    width: 16px;
+    height: 2px;
+}
+
+/* Vertical line */
+.crosshair::after {
+    left: 7px;
+    top: 0;
+    width: 2px;
+    height: 16px;
+}
+
+/* Small center dot */
+.crosshair-dot {
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    width: 2px;
+    height: 2px;
+    background-color: #ffffff;
+    box-shadow: 0 0 2px #ffffff;
+}
+
+/* Classic Bottom HUD Panel */
+.hud {
+    height: 90px;
+    background-color: #141416;
+    border-top: 6px solid #2e2e38;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 10px;
+    z-index: 5;
+    font-size: 10px;
+}
+
+.hud-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #0b0b0d;
+    border: 3px solid #3c3c46;
+    border-radius: 4px;
+    padding: 8px 12px;
+    min-width: 120px;
+    height: 70px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+.hud-label {
+    color: #888899;
+    font-size: 8px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.hud-value {
+    color: #ff3333;
+    font-size: 18px;
+    text-shadow: 0 0 4px rgba(255, 51, 51, 0.6);
+    font-weight: bold;
+}
+
+.hud-value.green {
+    color: #33ff33;
+    text-shadow: 0 0 4px rgba(51, 255, 51, 0.6);
+}
+
+.hud-value.yellow {
+    color: #ffff33;
+    text-shadow: 0 0 4px rgba(255, 255, 51, 0.6);
+}
+
+/* Doom Face Panel */
+.hud-face-panel {
+    min-width: 90px;
+    height: 70px;
+    border: 3px solid #3c3c46;
+    background-color: #1c1a24;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    border-radius: 4px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+#hud-face {
+    animation: facial-flicker 5s infinite;
+}
+
+/* Start / Overlay Screen */
+.overlay-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 10, 15, 0.85);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    text-align: center;
+    padding: 20px;
+}
+
+.overlay-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.game-title {
+    font-size: 28px;
+    color: #ff3333;
+    text-shadow: 3px 3px 0px #4d0000, 0 0 10px rgba(255, 51, 51, 0.5);
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.start-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    background-color: #ff3333;
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    cursor: pointer;
+    border-radius: 4px;
+    border-bottom: 4px solid #990000;
+    margin-bottom: 30px;
+    animation: pulse 1.5s infinite;
+}
+
+.start-btn:hover {
+    background-color: #ff5555;
+    border-bottom-color: #cc0000;
+}
+
+.instructions {
+    font-size: 8px;
+    line-height: 1.8;
+    color: #aaaaaa;
+    max-width: 450px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 15px;
+    border: 2px solid #333;
+    border-radius: 4px;
+}
+
+.instructions span {
+    color: #33ff33;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 51, 51, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 51, 51, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 51, 51, 0); }
+}
+
+@keyframes facial-flicker {
+    0%, 90%, 94%, 98%, 100% { transform: scale(1); }
+    92%, 96% { transform: scale(1.1) rotate(5deg); }
+}
+
+/* CRT Screen Warp Effect */
+@keyframes flicker {
+    0% { opacity: 0.98; }
+    50% { opacity: 1; }
+    100% { opacity: 0.99; }
+}
+
+.screen {
+    animation: flicker 0.15s infinite;
+}
+
+/* 2D Weapon Sprite Canvas Overlay */
+#weapon-canvas {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 280px;
+    height: 210px;
+    z-index: 12;
+    pointer-events: none;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* Target Hit Notification Banner */
+#hit-notification {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    color: #33ff33;
+    text-shadow: 0 0 6px rgba(51, 255, 51, 0.8), 2px 2px 0px #000000;
+    font-size: 14px;
+    font-family: 'Press Start 2P', monospace;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 15;
+}
+
+#hit-notification.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
